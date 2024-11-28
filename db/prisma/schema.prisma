@@ -1,0 +1,253 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider     = "postgres"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+model User {
+  id                 String              @id @default(cuid())
+  name               String
+  email              String              @unique
+  username           String?             @unique
+  country            String?             @default("United States")
+  emailVerified      DateTime?
+  password           String
+  gamesAsWhite       Game[]              @relation("GamesAsWhite")
+  gamesAsBlack       Game[]              @relation("GamesAsBlack")
+  rating             Int                 @default(800)
+  virtualBalance     Float               @default(100.0)
+  balance            Float               @default(0.0)
+  commissionBalance  Float               @default(0.0)
+  transactions       Transaction[]
+  reports            UserReport[]
+  role               Roles               @default(USER)
+  status             UserStatus          @default(ACTIVE)
+  otp                String?
+  otpExpiresAt       DateTime?
+  referralId         String              @unique @default("")
+  referredBy         Referral[]          @relation("ReferralByUser")
+  referredById       String?
+  referredUsers      Referral[]          @relation("ReferredUsers")
+  commissionDeposits CommissionDeposit[]
+  totalcommission    Float               @default(0.0)
+  createdAt          DateTime            @default(now())
+}
+
+model Referral {
+  id                String              @id @default(cuid())
+  referrer          User                @relation("ReferralByUser", fields: [referrerId], references: [id])
+  referrerId        String
+  referredUser      User                @relation("ReferredUsers", fields: [referredUserId], references: [id])
+  referredUserId    String
+  createdAt         DateTime            @default(now())
+  CommissionDeposit CommissionDeposit[]
+
+  @@index([referrerId])
+  @@index([referredUserId])
+}
+
+model Transaction {
+  id               String            @id @default(cuid())
+  user             User              @relation(fields: [userId], references: [id])
+  userId           String
+  amount           Float
+  finalamountInUSD Float
+  platform_charges Float
+  type             TransactionType
+  status           TransactionStatus
+  createdAt        DateTime          @default(now())
+  signature        String            @default("")
+  checkout_id      String            @default("")
+  api_ref          String            @unique @default(cuid())
+  currency         String            @default("USD")
+  secret_token     String            @default("")
+  mode             String            @default("")
+  wallet_address   String            @default("")
+
+  webhook Webhook?
+
+  @@index([userId])
+}
+
+model NewsletterSubscriber {
+  id    String   @id @default(cuid())
+  email String   @unique
+  date  DateTime @default(now())
+}
+
+model Webhook {
+  id            String  @id @default(cuid())
+  job_id        String?
+  url           String?
+  invoice_id    String?
+  checkout_id   String?
+  actually_paid String?
+  pay_address   String?
+  state         String?
+  provider      String?
+  charges       String?
+  net_amount    String?
+  currency      String?
+  account       String?
+  api_ref       String  @unique
+  host          String?
+  failed_reason String?
+  failed_code   String?
+  created_at    String?
+  updated_at    String?
+
+  transaction Transaction? @relation(fields: [api_ref], references: [api_ref])
+}
+
+model Webhook_retries {
+  id            String        @id @default(cuid())
+  status        WebhookStatus
+  error_message String?
+  job_id        String?
+  api_ref       String?
+}
+
+model Game {
+  id                 String       @id @default(cuid())
+  Move               Move[]
+  blackPlayerId      String?
+  whitePlayerId      String
+  whitePlayer        User         @relation("GamesAsWhite", fields: [whitePlayerId], references: [id])
+  blackPlayer        User?        @relation("GamesAsBlack", fields: [blackPlayerId], references: [id])
+  board              String       @default("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+  status             GameStatus?
+  result             GameResult?
+  gameOutCome        GameOutCome?
+  startTime          DateTime     @default(now())
+  endTime            DateTime?
+  stake              String       @default("")
+  isFriendly         Boolean      @default(false)
+  areBalancesUpdated Boolean      @default(false)
+  isVirtual          Boolean      @default(false) // to track virtual or real game
+
+  @@index([blackPlayerId])
+  @@index([whitePlayerId])
+}
+
+model Move {
+  id              String   @id @default(cuid())
+  gameId          String
+  Game            Game     @relation(fields: [gameId], references: [id])
+  moveNumber      Int
+  from            String
+  to              String
+  san             String
+  promotion       String?
+  player1TimeLeft Int?
+  player2TimeLeft Int?
+  createdAt       DateTime @default(now())
+
+  @@index([gameId])
+}
+
+model UserReport {
+  id          String          @id @default(cuid())
+  user        User            @relation(fields: [userId], references: [id])
+  userId      String
+  title       String
+  description String
+  status      ReportStatus    @default(PENDING)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  messages    ReportMessage[]
+
+  @@index([userId])
+}
+
+model ReportMessage {
+  id        String     @id @default(cuid())
+  report    UserReport @relation(fields: [reportId], references: [id])
+  reportId  String
+  sender    Roles
+  message   String
+  createdAt DateTime   @default(now())
+
+  @@index([reportId])
+}
+
+model CommissionDeposit {
+  id         String            @id @default(cuid())
+  referral   Referral          @relation(fields: [referralId], references: [id])
+  referralId String
+  user       User              @relation(fields: [userId], references: [id])
+  userId     String
+  amount     Float
+  deposit    Float
+  status     TransactionStatus
+  createdAt  DateTime          @default(now())
+
+  @@index([userId])
+  @@index([referralId])
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  REJECTED
+}
+
+enum GameStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+enum GameResult {
+  WHITE_WINS
+  BLACK_WINS
+  DRAW
+}
+
+enum GameOutCome {
+  ACCEPT_DRAW
+  RESIGN
+  CHECKMATE
+  DRAW
+  TIMER_EXPIRED
+  ADMIN
+  ABANDON
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  REFERRAL_COMMISSION
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+  REQUESTED
+  ERROR
+}
+
+enum Roles {
+  USER
+  ADMIN
+  MODRATOR
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+enum WebhookStatus {
+  SUCCESS
+  FAILURE
+}
