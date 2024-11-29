@@ -39,8 +39,8 @@ export async function EmailVerification(email: string, name: string) {
       `,
     };
 
-    await transporter.sendMail(mailConfigurations);
-    console.log("Email Sent Successfully");
+    const result = await transporter.sendMail(mailConfigurations);
+    console.log("Email Sent Successfully", result);
   } catch (error) {
     console.error("Error sending email:", error);
   }
@@ -193,7 +193,9 @@ export async function sendWithdrawalRequestNotification(
       from: NODEMAILER_MAIL,
       to: email,
       subject: "Withdrawal Request Notification",
-      html: html ?? `
+      html:
+        html ??
+        `
         <p>A new withdrawal request has been submitted with the following details:</p>
         <p>Request ID: <strong>${requestId}</strong></p>
         <p>Amount: <strong>${amount}</strong></p>

@@ -147,13 +147,13 @@ export default function NavBar() {
                       </Link>
                     </li>
                     <li>
-                      <Link
-                        to="/login"
+                      <a
+                        href="/login"
                         className="block text-black hover:text-yellow-500"
                         onClick={() => setLoginSubmenuOpen(false)}
                       >
                         Gamers
-                      </Link>
+                      </a>
                     </li>
                   </ul>
                 </div>
@@ -179,13 +179,13 @@ export default function NavBar() {
                       </Link>
                     </li>
                     <li>
-                      <Link
-                        to="/signup"
+                      <a
+                        href="/signup"
                         className="block text-black hover:text-yellow-500"
                         onClick={() => setSubmenuOpen(false)}
                       >
                         Gamers Account
-                      </Link>
+                      </a>
                     </li>
                   </ul>
                 </div>
@@ -313,13 +313,13 @@ export default function NavBar() {
                     </Link>
                   </li>
                   <li>
-                    <Link
-                      to="/login"
+                    <a
+                      href="/login"
                       className="block text-black hover:text-yellow-500"
                       onClick={toggleMenu}
                     >
                       Gamers
-                    </Link>
+                    </a>
                   </li>
                 </ul>
               )}
@@ -341,13 +341,13 @@ export default function NavBar() {
                     </Link>
                   </li>
                   <li>
-                    <Link
-                      to="/signup"
+                    <a
+                      href="/signup"
                       className="block text-black hover:text-yellow-500"
                       onClick={toggleMenu}
                     >
                       Gamers Account
-                    </Link>
+                    </a>
                   </li>
                 </ul>
               )}
