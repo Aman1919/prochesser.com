@@ -2,14 +2,14 @@ import { useState } from "react";
 import usePersonStore from "../../../contexts/auth";
 import { user } from "../schema";
 import { IoMdRefresh } from "react-icons/io";
-import { FaSearch} from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { BACKEND_URL } from "../../../constants/routes";
 import axios from "axios";
 import fetchData, { fetchUsersTypeData } from "../fetch/fetchdata";
 
 type UsersProps = {
   users: user[];
-  setUsers?: (arg:any) => void;
+  setUsers?: (arg: any) => void;
 };
 
 export const Users = ({ users, setUsers }: UsersProps) => {
@@ -21,23 +21,25 @@ export const Users = ({ users, setUsers }: UsersProps) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
 
-const GetSuspendedBannedUsers = async ()=>{
-  if(statusFilter==='ALL'){
-    setFilterSearchUsers(users);
-    return;
-  }
-const data =await fetchUsersTypeData(statusFilter);
-setFilterSearchUsers(data);
-}
+  const GetSuspendedBannedUsers = async () => {
+    if (statusFilter === "ALL") {
+      setFilterSearchUsers(users);
+      return;
+    }
+    const data = await fetchUsersTypeData(statusFilter);
+    setFilterSearchUsers(data);
+  };
 
-const GetModrators = async ()=>{
-const data = await fetchUsersTypeData('modrators');
-setFilterSearchUsers(data);
-}
+  const GetModrators = async () => {
+    const data = await fetchUsersTypeData("modrators");
+    setFilterSearchUsers(data);
+  };
 
   // Fetch user by email
   const fetchUserByEmail = async () => {
-    const url = `${BACKEND_URL}/admin/usersemail/${search.toLowerCase().trim()}`;
+    const url = `${BACKEND_URL}/admin/usersemail/${search
+      .toLowerCase()
+      .trim()}`;
     try {
       const response = await axios.get(url, {
         headers: {
@@ -85,14 +87,22 @@ setFilterSearchUsers(data);
             <option value="suspended">Suspended Users</option>
             <option value="banned">Banned Users</option>
           </select>
-          <button onClick={GetSuspendedBannedUsers} className="bg-yellow-600 py-2 px-4 text-white hover:bg-yellow-500 rounded">
-            Get by status
-          </button>
-          {loggedInUser?.role === "ADMIN" && (
-            <button onClick={GetModrators} className="bg-yellow-600 py-2 px-4 text-white hover:bg-yellow-500 rounded">
-            Get Modrators
-          </button>
-          )}
+          <div className="flex flex-wrap justify-between gap-2">
+            <button
+              onClick={GetSuspendedBannedUsers}
+              className="bg-yellow-600 p-2 whitespace-nowrap w-fit text-white hover:bg-yellow-500 rounded"
+            >
+              Get by status
+            </button>
+            {loggedInUser?.role === "ADMIN" && (
+              <button
+                onClick={GetModrators}
+                className="bg-yellow-600 p-2 whitespace-nowrap w-fit text-white hover:bg-yellow-500 rounded"
+              >
+                Get Modrators
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Search Section */}
@@ -112,7 +122,7 @@ setFilterSearchUsers(data);
               }
               fetchUserByEmail();
             }}
-            className="bg-yellow-600 py-2 px-4 text-white hover:bg-yellow-500 rounded"
+            className="bg-yellow-600 p-3 w-fit text-white hover:bg-yellow-500 rounded"
           >
             <FaSearch />
           </button>
@@ -121,7 +131,7 @@ setFilterSearchUsers(data);
               setFilterSearchUsers(users);
               setSearch("");
             }}
-            className="bg-yellow-600 py-2 px-4 text-white hover:bg-yellow-500 rounded"
+            className="bg-yellow-600 p-3 w-fit text-white hover:bg-yellow-500 rounded"
           >
             <IoMdRefresh />
           </button>
@@ -129,12 +139,15 @@ setFilterSearchUsers(data);
       </div>
 
       <div className="space-y-4">
-        {users&&filterSearchUsers.map((user) => (
-          <UserComponent key={user.id} user={user} />
-        ))}
+        {users &&
+          filterSearchUsers.map((user) => (
+            <UserComponent key={user.id} user={user} />
+          ))}
       </div>
 
-      {isLoadingMore && <p className="text-white text-xl m-3">Loading more games...</p>}
+      {isLoadingMore && (
+        <p className="text-white text-xl m-3">Loading more games...</p>
+      )}
 
       {hasMore && !isLoadingMore && (
         <button
@@ -185,7 +198,9 @@ const UserComponent = ({ user }: UserProps) => {
           <p className="text-gray-600">
             Status:{" "}
             <span
-              className={user.status === "ACTIVE" ? "text-green-600" : "text-red-600"}
+              className={
+                user.status === "ACTIVE" ? "text-green-600" : "text-red-600"
+              }
             >
               {user.status}
             </span>

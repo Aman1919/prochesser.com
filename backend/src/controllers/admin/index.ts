@@ -174,6 +174,7 @@ export const getUser = async (req: Request, res: Response) => {
         balance: true,
         rating: true,
         status: true,
+        role: true,
         gamesAsWhite: {
           where: { isVirtual: false },
           select: { id: true, status: true, result: true, stake: true },

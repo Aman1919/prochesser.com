@@ -30,7 +30,11 @@ import {
   MarkIssueCompleted,
 } from "../../controllers/admin/updateuser";
 import { DashboardStats, UserProfits } from "../../controllers/admin/stats";
-import { createModrator } from "../../controllers/admin/modrators";
+import {
+  UpdateModratorToUser,
+  UpdateUserToModrator,
+  createModrator,
+} from "../../controllers/admin/modrators";
 
 const router = express.Router();
 
@@ -99,6 +103,20 @@ router.put(
   authenticateJWT,
   authorizeAdminModrator,
   MarkIssueCompleted
+);
+
+//update roles
+router.put(
+  "/users/:id/moderatorrole",
+  authenticateJWT,
+  authorizeAdmin,
+  UpdateUserToModrator
+);
+router.put(
+  "/users/:id/userrole",
+  authenticateJWT,
+  authorizeAdmin,
+  UpdateModratorToUser
 );
 
 //update routes

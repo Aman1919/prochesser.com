@@ -4,7 +4,7 @@ import { IoMdArrowBack } from "react-icons/io";
 import { MdEdit } from "react-icons/md";
 import Spinner from "../../spinner";
 import bannedUser from "../fetch/banneduser";
-import updateUser from "../fetch/updateuser";
+import updateUser, { updateUserRole } from "../fetch/updateuser";
 import usePersonStore from "../../../contexts/auth";
 import { useGetUser } from "../../../hooks/useGetUser";
 import fetchPlayer from "../fetch/fetchplayer";
@@ -67,6 +67,20 @@ const PlayerProfile: React.FC = () => {
     bannedUser(id, reason);
   };
 
+  const updateRole = async () => {
+    if (!id) return;
+    const role = player.role;
+    const text =
+      role === "USER"
+        ? "Updating player role User to Moderator."
+        : "Updating player role Moderator to User.";
+    const a = prompt(text + " Type YES if you accept.");
+    if (a !== "YES") {
+      return;
+    }
+    updateUserRole(role, id);
+  };
+
   const handleViewGame = (gameId: string) => {
     window.location.href = `/game/${gameId}`;
   };
@@ -117,6 +131,16 @@ const PlayerProfile: React.FC = () => {
                 <span className="font-semibold text-gray-700">Status:</span>{" "}
                 {player.status}
               </p>
+              {user?.role === "ADMIN" && (
+                <div className="flex items-center gap-1">
+                  <span className="font-semibold text-gray-700">Role:</span>
+                  <span className="">{player.role}</span>
+                  <MdEdit
+                    className="cursor-pointer"
+                    onClick={() => updateRole()}
+                  />
+                </div>
+              )}
             </div>
             <div className="text-gray-600">
               <p>

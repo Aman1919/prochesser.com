@@ -211,7 +211,7 @@ export default function NavBar() {
                   </Link>
                 </>
               )}
-              {user?.role === "ADMIN" && (
+              {user.role && user.role !== "USER" && (
                 <>
                   <button
                     onClick={() => navigate("/dashboard")}
@@ -219,6 +219,10 @@ export default function NavBar() {
                   >
                     Dashboard
                   </button>
+                </>
+              )}
+              {user.role && user.role === "USER" && (
+                <>
                   <button
                     onClick={() => navigate("/game")}
                     className="bg-yellow-500 text-black font-semibold py-2 px-3 rounded-full shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-yellow-400"
@@ -370,7 +374,7 @@ export default function NavBar() {
                   </Link>
                 </>
               )}
-              {user?.role === "ADMIN" && (
+              {user.role && user.role !== "USER" && (
                 <>
                   <button
                     onClick={() => navigate("/dashboard")}
@@ -378,6 +382,10 @@ export default function NavBar() {
                   >
                     Dashboard
                   </button>
+                </>
+              )}
+              {user.role && user.role === "USER" && (
+                <>
                   <button
                     onClick={() => navigate("/game")}
                     className="bg-yellow-500 text-black font-semibold py-2 px-3 rounded-full shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-yellow-400"

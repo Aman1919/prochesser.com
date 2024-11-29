@@ -17,10 +17,10 @@ export const PrivateRoute = ({ children }: RouteProps) => {
   if (!user) return <Navigate to="/login" />;
 
   switch (user.role) {
-    // case "ADMIN":
-    //   return <Navigate to="/dashboard" />;
-    // case "MODRATOR":
-    //   return <ModratorDashboard />;
+    case "ADMIN":
+      return <Navigate to="/dashboard" />;
+    case "MODRATOR":
+      return <ModratorDashboard />;
     default:
       return <>{children}</>;
   }
@@ -32,13 +32,7 @@ export const PublicRoute = ({ children }: RouteProps) => {
 
   if (isLoading) return <Spinner />;
 
-  return user ? (
-    <Navigate to="/game" />
-  ) : (
-    <>
-      {children}
-    </>
-  );
+  return user ? <Navigate to="/game" /> : <>{children}</>;
 };
 
 export const AdminPrivateRoute = ({ children }: RouteProps) => {
