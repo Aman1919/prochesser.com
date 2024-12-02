@@ -34,7 +34,7 @@ export const BestMove = ({
     );
   };
 
-  if (!user || user?.role !== "ADMIN") return null;
+  if (!user || user?.role === "USER") return null;
 
   return (
     <svg

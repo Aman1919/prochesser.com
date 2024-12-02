@@ -31,7 +31,7 @@ const SuggestMoves = () => {
     }
   };
 
-  if(!user || user?.role !== "ADMIN") return null;
+  if(!user || user?.role === "USER") return null;
   if (!isGameStarted) return null;
 
   return (

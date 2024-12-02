@@ -221,16 +221,12 @@ export default function NavBar() {
                   </button>
                 </>
               )}
-              {user.role && user.role === "USER" && (
-                <>
-                  <button
-                    onClick={() => navigate("/game")}
-                    className="bg-yellow-500 text-black font-semibold py-2 px-3 rounded-full shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-yellow-400"
-                  >
-                    Game
-                  </button>
-                </>
-              )}
+              <button
+                onClick={() => navigate("/game")}
+                className="bg-yellow-500 text-black font-semibold py-2 px-3 rounded-full shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-yellow-400"
+              >
+                Game
+              </button>
               <button
                 onClick={() => {
                   localStorage.removeItem("token");
