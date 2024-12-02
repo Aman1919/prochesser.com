@@ -39,8 +39,8 @@ export async function EmailVerification(email: string, name: string) {
       `,
     };
 
-    await transporter.sendMail(mailConfigurations);
-    console.log("Email Sent Successfully");
+    const result = await transporter.sendMail(mailConfigurations);
+    console.log("Email Sent Successfully", result);
   } catch (error) {
     console.error("Error sending email:", error);
   }
@@ -91,8 +91,12 @@ export async function SendModeratorNotification(
       subject: "Welcome to ProChesser as a Moderator!",
       html: `<p>Hi ${name}</p>
              <p>You’ve been added as a moderator on ProChesser.com! Thank you for joining our team. If you have any questions, feel free to reach out.</p>
-             <p>Your temporary password is: <strong>${password}</strong></p>
-             <p>Please log in using this password and change it immediately.</p>
+             ${
+               password
+                 ? `<p>Your temporary password is: <strong>${password}</strong></p>
+             <p>Please log in using this password and change it immediately.</p>`
+                 : ""
+             }
              <p>Welcome aboard!</p>
              <p>Sincerely,</p>
              <p>The ProChesser Team</p>
@@ -193,7 +197,9 @@ export async function sendWithdrawalRequestNotification(
       from: NODEMAILER_MAIL,
       to: email,
       subject: "Withdrawal Request Notification",
-      html: html ?? `
+      html:
+        html ??
+        `
         <p>A new withdrawal request has been submitted with the following details:</p>
         <p>Request ID: <strong>${requestId}</strong></p>
         <p>Amount: <strong>${amount}</strong></p>
