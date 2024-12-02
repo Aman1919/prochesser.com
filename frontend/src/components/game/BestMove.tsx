@@ -1,5 +1,6 @@
 import usePersonStore from "../../contexts/auth";
 import { useBestMoveStore } from "../../contexts/bestMove.context";
+import { useGameStore } from "../../contexts/game.context";
 import { squareToCoords } from "../../types/utils/stockfish";
 
 export const BestMove = ({
@@ -10,10 +11,15 @@ export const BestMove = ({
   const user = usePersonStore((state) => state.user);
 
   const { bestMove } = useBestMoveStore(["bestMove"]);
+  const { color: userColor } = useGameStore(["color"]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const drawArrow = ({ from, to, color }: any, scale: any) => {
-    const [fromX, fromY] = squareToCoords(from, color);
-    const [toX, toY] = squareToCoords(to, color);
+    if(!userColor) {
+      alert("Something went wrong while playing the best move");
+      return null;
+    }
+    const [fromX, fromY] = squareToCoords(from, userColor);
+    const [toX, toY] = squareToCoords(to, userColor);
 
     const startX = fromX * scale;
     const startY = (8 - fromY) * scale;
