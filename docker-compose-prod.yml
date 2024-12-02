@@ -17,7 +17,7 @@ services:
     ports:
       - "6379:6379"
   backend:
-    image: gramo37/chessbet-backend:latest
+    image: copyauthors288/chessbet-backend:latest
     ports: 
       - "5000:5000"
     environment:
@@ -64,7 +64,7 @@ services:
     depends_on:
       - redis
   ws:
-    image: gramo37/chessbet-ws:latest
+    image: copyauthors288/chessbet-ws:latest
     ports: 
       - "8000:8000"
     environment:
@@ -108,7 +108,7 @@ services:
     depends_on:
       - redis
   frontend:
-    image: gramo37/chessbet-frontend:latest
+    image: copyauthors288/chessbet-frontend:latest
     ports:
       - "3000:3000"
     depends_on:

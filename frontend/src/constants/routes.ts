@@ -13,7 +13,7 @@ export const BLOG_API_LINK =
   import.meta.env.VITE_BLOG_LINK ?? "https://cfg8st-3333.csb.app";
 export const PAYPALCLIENTID =
   "AU9ax9vtMqB4YOekyufMw-7kfgjszREmdqCDyfsN1KpDbh3ynGvZF-ZlVez_VvwA02NAtAxDYs3EPMJN";
-const HOST = "http://prochesser.com";
+// const HOST = "https://prochesser.com";
 // const HOST = "https://chess.gramo37.com"
 
 // // // Deployment routes
