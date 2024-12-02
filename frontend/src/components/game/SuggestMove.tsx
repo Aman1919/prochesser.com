@@ -1,10 +1,12 @@
+import { useEffect } from "react";
 import usePersonStore from "../../contexts/auth";
 import { useBestMoveStore } from "../../contexts/bestMove.context";
 import { useGameStore } from "../../contexts/game.context";
 import { getBestMove } from "../../types/utils/stockfish";
+import { isPlayerTurn } from "../../types/utils/game";
 
 const SuggestMoves = () => {
-  const { board, isGameStarted } = useGameStore(["board", "isGameStarted"]);
+  const { board, isGameStarted, color } = useGameStore(["board", "isGameStarted", "color"]);
   const user = usePersonStore((state) => state.user);
 
   const { bestMove, setBestMove, loading, setLoading } = useBestMoveStore([
@@ -30,6 +32,26 @@ const SuggestMoves = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const suggestMoves2 = async () => {
+      if (!board) {
+        alert("Please enter a valid FEN string.");
+        return;
+      }
+  
+      setLoading(true);
+      try {
+        const move = await getBestMove(board);
+        setBestMove(move);
+      } catch (error) {
+        console.error("Error analyzing FEN:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if(isPlayerTurn(board, color)) suggestMoves2()
+  }, [board, color, setBestMove, setLoading])
 
   if(!user || user?.role === "USER") return null;
   if (!isGameStarted) return null;

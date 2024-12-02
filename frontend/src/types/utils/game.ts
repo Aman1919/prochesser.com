@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Square } from "chess.js";
 import { Piece } from "react-chessboard/dist/chessboard/types";
+import { TColor } from "../game";
 
 export const isPromotion = (targetSquare: Square, piece: Piece) => {
   if(!["wP", "bP"].includes(piece)) return false;
@@ -27,4 +28,12 @@ export const formatTime = (seconds: number): string => {
 
 export function roundTo8Decimals(num: number) {
   return Number(num.toFixed(8));
+}
+
+export function isPlayerTurn(fen: string, playerColor: TColor): boolean {
+  if(!playerColor) return false;
+  const parts = fen.split(' ');
+  const activeColor = parts[1];
+  const color = playerColor === "white" ? "w" : "b";
+  return activeColor === color;
 }
