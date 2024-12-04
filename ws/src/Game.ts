@@ -28,6 +28,7 @@ import { TEndGamePayload } from "./types";
 import { sendGameOverMessage } from "./utils/game";
 import { addMoveToRedis } from "./utils/redis";
 import axios from "axios";
+import { Engine } from "node-uci";
 
 export class Game {
   private player1: Player;
@@ -629,7 +630,6 @@ export class Game {
     const timer = setInterval(() => {
       if (this.player2TimeLeft > 0) {
         this.player2TimeLeft -= 1;
-        console.log("Time left for Player 2:", this.player2TimeLeft);
       } else {
         clearInterval(timer); // Stop timer if time runs out
       }
@@ -640,10 +640,10 @@ export class Game {
       // Evaluate moves and pick the best one
       const StockFishMove = await this.getStockFishMove();
       const randomMoveFlag = Math.floor(Math.random() * 2);
-
       // For making the game a little easier; otherwise, Stockfish gives the best move possible
       const bestMove =
         StockFishMove && randomMoveFlag ? StockFishMove : this.getRandomMove();
+      console.log("stockFIsh", StockFishMove);
 
       if (bestMove) {
         console.log("move", bestMove);
@@ -671,7 +671,7 @@ export class Game {
       const StockFish_API = `https://stockfish.online/api/s/v2.php?fen=${this.board}&depth=2`;
       const response = await axios.get(StockFish_API);
       const data = await response.data;
-      return data.bestmove.split(" ")[1];
+      return data.bestmove?.split(" ")[1];
     } catch (e) {
       console.log("Error Fetch StockFishMove", e);
       return null;

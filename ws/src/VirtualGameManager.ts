@@ -287,7 +287,9 @@ export class VirtualGameManager {
     if (db_game && type !== "random") {
       console.log("Game is present in DB, recreating it");
       // Check for the game locally
-      const game = this.games.find((item) => item.getGameId() === db_game?.id);
+      const game = this.games.find(
+        (item) => item.getGameId() === db_game?.id && item.isFriendly
+      );
       if (game) {
         console.log("Game found locally -> ", game.getGameId());
         const restartedPlayer =
@@ -427,70 +429,29 @@ export class VirtualGameManager {
         });
       }
     } else if (type === "random") {
-      // Check for ratings and match the players
-      // Also check for all non friendly matches
-      let game;
-      if (Boolean(gameId)) {
-        // Check for gameId in then case of user select game from lobby
-        game = this.games.find(
-          (item) =>
-            item.getGameStatus() === NOT_YET_STARTED &&
-            item.getGameId() === gameId
-        );
-      } else {
-        game = this.games.find((game) => {
-          return (
-            game.getGameStatus() === NOT_YET_STARTED &&
-            !game.isFriendly &&
-            // Check nearest rating only if type === "random"
-            game.matchRating(user.rating) &&
-            type === "random" &&
-            game.stake === stake
-          );
-        });
-      }
-      console.log("Matched Games -> ", game?.getGameId());
-      if (!game) {
-        // Push the game in this.games with a null player 2
-        const player1 = new Player(
-          socket,
-          WHITE,
-          token,
-          user.name,
-          user.id,
-          user.rating
-        );
-        const player2 = this.generateRandomPlayer(user.rating);
-        const game = new Game(
-          player1,
-          player2,
-          false,
-          stake,
-          undefined,
-          undefined,
-          undefined,
-          true
-        );
-        console.log("Creating new game -> ", game.getGameId());
-        this.games.push(game);
-        await game?.createGame();
-      } else {
-        // match the opponent and start the game
-
-        const player1 = game.getPlayer1();
-        console.log(player1.getPlayerName());
-        // Avoid creating game between the same player.
-        if (player1.getPlayerId() !== user.id) {
-          const player2 = game?.getPlayer2();
-          player2?.setPlayerToken(token);
-          player2?.setPlayerSocket(socket);
-          player2?.setPlayerId(user.id);
-          player2?.setPlayerName(user.name);
-          player2?.setPlayerRating(user.rating);
-          console.log("Adding new player to game -> ", game.getGameId());
-          await game?.createGame();
-        }
-      }
+      // Push the game in this.games with a null player 2
+      const player1 = new Player(
+        socket,
+        WHITE,
+        token,
+        user.name,
+        user.id,
+        user.rating
+      );
+      const player2 = this.generateRandomPlayer(user.rating);
+      const game = new Game(
+        player1,
+        player2,
+        false,
+        stake,
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
+      console.log("Creating new game -> ", game.getGameId());
+      this.games.push(game);
+      await game?.createGame();
     }
   }
 
