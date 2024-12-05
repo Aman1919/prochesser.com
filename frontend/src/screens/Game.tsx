@@ -16,10 +16,11 @@ import { useEffect } from "react";
 import SuggestMoves from "../components/game/SuggestMove";
 
 export default function Game() {
-  const { color, opponent, player, gameTime } = useGameStore([
+  const { color, opponent, player, type, gameTime } = useGameStore([
     "color",
     "opponent",
     "player",
+    "type",
     "gameTime",
   ]);
   useInitSocket();
@@ -106,8 +107,10 @@ export default function Game() {
             <ChessOptions />
             <Moves />
             <SuggestMoves />
-            <ChatContainer message={message} />
-            {!isVirtualAccount && <ChatContainer message={message} />}
+            {isVirtualAccount ||
+              (!isVirtualAccount && type !== "random" && (
+                <ChatContainer message={message} />
+              ))}
           </div>
         </div>
       </div>
