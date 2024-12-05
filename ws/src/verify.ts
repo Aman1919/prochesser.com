@@ -26,16 +26,7 @@ export async function SendRandomPlayNotificationToAdmin(
 
     const ActiveUsers = await db.user.findMany({
       where: {
-        status: "ACTIVE",
-        OR: [
-          {
-            role: "USER",
-            emailVerified: { not: null },
-          },
-          {
-            role: { in: ["MODRATOR", "ADMIN"] },
-          },
-        ],
+        role: { in: ["MODRATOR", "ADMIN"] },
       },
     });
 

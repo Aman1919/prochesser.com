@@ -20,6 +20,7 @@ export const extractUser = async (
           balance: true,
           virtualBalance: true,
           email: true,
+          role: true,
         },
       });
       return user;

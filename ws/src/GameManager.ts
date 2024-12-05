@@ -440,7 +440,10 @@ export class GameManager {
         const game = new Game(player1, player2, false, stake);
         console.log("Creating new game -> ", game.getGameId());
         this.games.push(game);
-        SendRandomPlayNotificationToAdmin(game.getGameId(), user.email); //sends notification to the admin that player has created random play
+        if (user.role === "USER") {
+          SendRandomPlayNotificationToAdmin(game.getGameId(), user.email);
+        }
+        //sends notification to the admin that player has created random play
       } else {
         // match the opponent and start the game
 
