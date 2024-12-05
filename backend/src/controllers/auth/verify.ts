@@ -1,7 +1,12 @@
 import nodemailer from "nodemailer";
 import { generateToken } from "../../utils";
 import { db } from "../../db";
-import { BACKEND_URL, NODEMAILER_MAIL, NODEMAILER_PASS } from "../../constants";
+import {
+  BACKEND_URL,
+  FRONTEND_URL,
+  NODEMAILER_MAIL,
+  NODEMAILER_PASS,
+} from "../../constants";
 import { BACKEND_ROUTE } from "../..";
 
 const transporter = nodemailer.createTransport({
@@ -222,6 +227,7 @@ export async function sendWithdrawalRequestNotification(
 
 export const SendNewsletterNotification = async (email: string) => {
   try {
+    const unsubscribelink = `${FRONTEND_URL}/unsubscribed`;
     const mailOptions = {
       from: `${NODEMAILER_MAIL}`,
       to: email,
@@ -233,6 +239,7 @@ export const SendNewsletterNotification = async (email: string) => {
         <p>We are excited to have you on board!</p>
         <p>If you have any questions or need assistance, feel free to reach out to our support team at ${NODEMAILER_MAIL}.</p>
         <p>Thank you for choosing ProChesser!</p>
+        <p><a href="${unsubscribelink}">Unsubscribe from ProChesser emails</a></p>
           <p>Sincerely,</p>
         <p>The ProChesser Team</p>
         <a href="https://www.prochesser.com/">https://www.prochesser.com/</a>    

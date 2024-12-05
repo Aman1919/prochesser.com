@@ -161,6 +161,7 @@ function App() {
                   </>
                 }
               />
+              <Route path="/unsubscribed" element={<>Unsubscribed</>} />
               <Route
                 path="/"
                 element={

@@ -39,10 +39,10 @@ export const signup = async (req: Request, res: Response) => {
     });
 
     if (existingUser) {
-      if(existingUser.email === email)
+      if (existingUser.email === email)
         return res.status(400).json({ message: "Email already exists" });
 
-      if(existingUser.username === username)
+      if (existingUser.username === username)
         return res.status(400).json({ message: "Username already exists" });
     }
 
@@ -175,7 +175,6 @@ export const refresh = async (req: Request, res: Response) => {
 export const verifiyEmail = async (req: Request, res: Response) => {
   try {
     const user: any = (req?.user as any)?.user;
-    console.log("reacnkls");
 
     if (user.emailVerified) {
       return res.status(400).json({ message: "Already verified" });
