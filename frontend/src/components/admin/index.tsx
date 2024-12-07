@@ -11,7 +11,6 @@ import Newsletter from "./component/newsletter";
 
 const Dashboard = () => {
   const [reports, setReports] = useState([]);
-  const [transactions, setTransactions] = useState([]);
   const [games, setGames] = useState([]);
   const [users, setUsers] = useState([]);
   const [activeTab, setActiveTab] = useState<string>("reports");
@@ -20,11 +19,11 @@ const Dashboard = () => {
   useEffect(() => {
     async function getdata() {
       const fetchedReports = await fetchData("reports");
-      const fetchedTransactions = await fetchData("transactions");
+      // const fetchedTransactions = await fetchData("transactions");
       const fetchedGames = await fetchData("games");
       const fetchedUsers = await fetchData("users");
       setReports(fetchedReports);
-      setTransactions(fetchedTransactions);
+      // setTransactions(fetchedTransactions);
       setGames(fetchedGames);
       setUsers(fetchedUsers);
       setChatVisibility(false);
@@ -84,10 +83,7 @@ const Dashboard = () => {
         <div>
           {activeTab === "reports" && <ReportsList reports={reports} />}
           {activeTab === "transactions" && (
-            <TransactionsList
-              transactions={transactions}
-              setTransactions={setTransactions}
-            />
+            <TransactionsList />
           )}
           {activeTab === "games" && (
             <GamesList games={games} setGames={setGames} />

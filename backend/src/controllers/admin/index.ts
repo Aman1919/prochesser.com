@@ -129,7 +129,7 @@ export const GetTransactions = async (req: Request, res: Response) => {
             },
           },
         },
-        skip: (pageNumber - 1) * pageSize, // Skip for pagination
+        // skip: (pageNumber - 1) * pageSize, // Skip for pagination
         take: pageSize, // Take only pageSize records
         orderBy: {
           createdAt: "desc",
