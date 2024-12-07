@@ -1,10 +1,17 @@
 import { Request, Response } from "express";
 import path from "path";
-import { captureOrder, createOrder, createPayout, generateAccessToken, generateClientToken } from "../../utils/paypal";
+import {
+  captureOrder,
+  createOrder,
+  createPayout,
+  generateAccessToken,
+  generateClientToken,
+} from "../../utils/paypal";
 import axios from "axios";
 import { PAYPAL_BASE, PLATFORM_FEES, WEBHOOK_ID } from "../../constants";
 import { db } from "../../db";
 import { processCommissionDeposit } from "../../controllers/payments/mpesa";
+import { withdrawalChecks } from "../../utils/payment";
 
 export const getURL = async (req: Request, res: Response) => {
   try {
@@ -65,11 +72,13 @@ export const getOrders = async (req: Request, res: Response) => {
           platform_charges,
           // secret_token: encrpted_secret_token, // TODO: Bcrypt this before saving
           mode: "paypal",
-      }});
-      
+        },
+      });
     } catch (error) {
-      console.log(error)
-      return res.status(500).json({ error: "Failed to add record in transaction." });
+      console.log(error);
+      return res
+        .status(500)
+        .json({ error: "Failed to add record in transaction." });
     }
     res.status(httpStatusCode).json(jsonResponse);
   } catch (error) {
@@ -153,8 +162,8 @@ export const handlePayPalWebhook = async (req: Request, res: Response) => {
       console.log("Error in validating response", error);
       return res.status(500).json({
         status: "error",
-        message: "Something went wrong while validation"
-      })
+        message: "Something went wrong while validation",
+      });
     }
 
     console.log("verificationResponse", verificationResponse);
@@ -203,7 +212,7 @@ export const handlePayPalWebhook = async (req: Request, res: Response) => {
       if (
         event.event_type === "PAYMENT.CAPTURE.DENIED" ||
         event.event_type === "PAYMENT.CAPTURE.REFUNDED" ||
-        event.event_type === "PAYMENT.CAPTURE.DECLINED" || 
+        event.event_type === "PAYMENT.CAPTURE.DECLINED" ||
         ["denied", "declined"].includes(status?.toLowerCase())
       ) {
         console.log(
@@ -309,15 +318,61 @@ export const handlePayPalWebhook = async (req: Request, res: Response) => {
       event,
     });
   }
-}
+};
 
 export const handlePaypalPayout = async (req: Request, res: Response) => {
   try {
-    const { email, amount, currency } = req.body;
+    let { email, amount, currency } = req.body;
+    amount = Number(amount);
     const user: any = (req?.user as any)?.user;
-    const recipientEmail = user?.email;
-    const response = await createPayout(recipientEmail, amount, currency);
-    res.status(200).json(response);
+    const currentBalance = user?.balance;
+
+    if (!amount || !currency || !email)
+      return res.status(404).json({
+        status: "error",
+        message: "Please provide amount, currency, email",
+      });
+
+    const withdrawalCheck = await withdrawalChecks(
+      amount,
+      amount,
+      email,
+      currentBalance,
+      user
+    );
+
+    if (!withdrawalCheck.status) {
+      return res.status(400).json({
+        status: false,
+        message: withdrawalCheck.message,
+      });
+    }
+
+    const platform_charges = amount * PLATFORM_FEES;
+    const transaction = await db.transaction.create({
+      data: {
+        userId: user.id,
+        amount: amount,
+        type: "WITHDRAWAL",
+        status: "REQUESTED",
+        // TODO: Temporary change
+        signature: "",
+        checkout_id: "",
+        finalamountInUSD: amount - platform_charges,
+        platform_charges,
+        mode: "paypal",
+        wallet_address: email,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Money withdrawal initiated! Kindly wait till it is approved.",
+      transaction, // Return the transaction object
+    });
+
+    // const recipientEmail = user?.email;
+    // const response = await createPayout(recipientEmail, amount, currency);
+    // res.status(200).json(response);
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -325,4 +380,4 @@ export const handlePaypalPayout = async (req: Request, res: Response) => {
       message: "internal Server Error",
     });
   }
-}
+};

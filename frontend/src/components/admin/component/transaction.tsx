@@ -163,51 +163,81 @@ const TransactionsComponent = ({ transaction }: TransactionsProps) => {
 
   return (
     <li
-      key={transaction.id}
-      className={`p-4 rounded-md shadow-md ${
-        transaction.status === "completed" ? "bg-green-100" : "bg-gray-100"
-      }`}
-    >
-      <div className="flex justify-between">
-        <div>
-          <p className="font-semibold">
-            Amount:{" "}
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: transaction.currency,
-            }).format(transaction.amount)}
-          </p>
-          <p className="text-sm text-gray-600">Status: {transaction.status}</p>
-          <p className="text-sm text-gray-600">Type: {transaction.type}</p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-600">
-            {format(new Date(transaction.createdAt), "PPpp")}
-          </p>
-          <div>
-            <p className="text-sm text-gray-800 font-semibold">
-              User: {transaction.user.name}
-            </p>
-            <p className="text-sm text-gray-600">
-              Email: {transaction.user.email}
-            </p>
-          </div>
-          {transaction.type === "WITHDRAWAL" && <div className="flex mt-1">
-            <button onClick={approve} className="bg-blue-300 px-2 py-1 mx-2">
-              Approve
-            </button>
-            <button onClick={reject} className="bg-blue-300 px-2 py-1 mx-2">
-              Reject
-            </button>
-          </div>}
-        </div>
-      </div>
-      <p
-        className="font-semibold text-yellow-600 cursor-pointer hover:underline"
-        onClick={() => onViewProfile(transaction.user.id)}
-      >
-        View User
+  key={transaction.id}
+  className={`p-4 rounded-lg shadow-lg transition ${
+    transaction.status === "completed"
+      ? "bg-green-50 border border-green-300"
+      : "bg-gray-50 border border-gray-300"
+  }`}
+>
+  <div className="flex justify-between gap-6">
+    <div>
+      <p className="font-semibold text-gray-800">
+        Amount:{" "}
+        {new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency:
+            transaction?.mode === "crypto" ? "USD" : transaction?.currency,
+        }).format(transaction?.amount)}
       </p>
-    </li>
+      <p className="font-semibold text-gray-800">
+        Platform Fees:{" "}
+        {new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency:
+            transaction?.mode === "crypto" ? "USD" : transaction?.currency,
+        }).format(transaction?.platform_charges)}
+      </p>
+      <p className="font-semibold text-gray-800">
+        Final Amount in USD:{" "}
+        {new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(transaction?.finalamountInUSD)}
+      </p>
+      <p className="text-sm text-gray-500 mt-2">
+        Status: {transaction?.status}
+      </p>
+      <p className="text-sm text-gray-500">Type: {transaction?.type}</p>
+      <p className="text-sm text-gray-500">Mode: {transaction?.mode}</p>
+    </div>
+    <div className="w-5/12">
+      <p className="text-sm text-gray-500">
+        {format(new Date(transaction.createdAt), "PPpp")}
+      </p>
+      <div className="mt-4">
+        <p className="text-sm font-medium text-gray-700">
+          User: {transaction.user.name}
+        </p>
+        <p className="text-sm text-gray-500">Email: {transaction.user.email}</p>
+        <p className="text-sm text-gray-500">
+          Wallet Address/Phone/Email: {transaction?.wallet_address}
+        </p>
+      </div>
+      {transaction.type === "WITHDRAWAL" && (
+        <div className="flex mt-4 gap-4">
+          <button
+            onClick={approve}
+            className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition"
+          >
+            Approve
+          </button>
+          <button
+            onClick={reject}
+            className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
+          >
+            Reject
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+  <p
+    className="mt-4 font-semibold text-blue-600 cursor-pointer hover:underline"
+    onClick={() => onViewProfile(transaction.user.id)}
+  >
+    View User
+  </p>
+</li>
   );
 };

@@ -79,11 +79,15 @@ export const GetTransactions = async (req: Request, res: Response) => {
     const transactions = await db.transaction.findMany({
       select: {
         amount: true,
+        platform_charges: true,
+        finalamountInUSD: true,
         createdAt: true,
         id: true,
         status: true,
         type: true,
         currency: true,
+        wallet_address: true,
+        mode: true,
         user: {
           select: {
             name: true,

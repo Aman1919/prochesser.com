@@ -28,7 +28,6 @@ import { TEndGamePayload } from "./types";
 import { sendGameOverMessage } from "./utils/game";
 import { addMoveToRedis } from "./utils/redis";
 import axios from "axios";
-import { Engine } from "node-uci";
 
 export class Game {
   private player1: Player;

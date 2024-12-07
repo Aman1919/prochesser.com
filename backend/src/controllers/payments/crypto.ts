@@ -259,8 +259,6 @@ export const checkTransactionStatus2 = async (req: Request, res: Response) => {
 
     console.log("Updating balance by ", isSuccess.amount, isSuccess.coin);
 
-    console.log(user, "Lavda");
-
     await db.$transaction([
       db.transaction.create({
         data: {
