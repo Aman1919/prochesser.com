@@ -69,37 +69,87 @@ export const adminLogin = async (req: Request, res: Response) => {
   }
 };
 
+const transactionMapping = (type: string) => {
+  if (type === "deposit") return "DEPOSIT";
+  if (type === "withdrawal") return "WITHDRAWAL";
+  return undefined;
+};
+
+const statusMapping = (type: string) => {
+  if (type === "requested") return "REQUESTED";
+  if (type === "completed") return "COMPLETED";
+  if (type === "cancelled") return "CANCELLED";
+  if (type === "pending") return "PENDING";
+  return undefined;
+};
+
 export const GetTransactions = async (req: Request, res: Response) => {
   try {
     const { page } = req.params;
+    const url = require("url");
+    const parsedUrl = url.parse(req.url, true);
+    const { type, status, search } = parsedUrl.query;
+
+    const transactionType = transactionMapping(type);
+    const statusType = statusMapping(status);
+
     const user: any = (req?.user as any)?.user;
     const role = user.role as string;
     const pageNumber = parseInt(page as string) || 1; // Default to page 1 if not provided
-    const pageSize = 8; // Number of games per page
-    const transactions = await db.transaction.findMany({
-      select: {
-        amount: true,
-        platform_charges: true,
-        finalamountInUSD: true,
-        createdAt: true,
-        id: true,
-        status: true,
-        type: true,
-        currency: true,
-        wallet_address: true,
-        mode: true,
-        user: {
-          select: {
-            name: true,
-            email: true,
-            id: true,
+    const pageSize = pageNumber * 8; // Number of games per page
+    const [transactions, totalCount] = await Promise.all([
+      db.transaction.findMany({
+        where: {
+          type: transactionType,
+          status: statusType,
+          OR: search
+            ? [
+                { user: { name: { contains: search, mode: "insensitive" } } },
+                { user: { email: { contains: search, mode: "insensitive" } } },
+                { wallet_address: { contains: search, mode: "insensitive" } },
+              ]
+            : undefined,
+        },
+        select: {
+          amount: true,
+          platform_charges: true,
+          finalamountInUSD: true,
+          createdAt: true,
+          id: true,
+          status: true,
+          type: true,
+          currency: true,
+          wallet_address: true,
+          mode: true,
+          user: {
+            select: {
+              name: true,
+              email: true,
+              id: true,
+            },
           },
         },
-      },
-      skip: (pageNumber - 1) * pageSize, // Skip games for previous pages
-      take: pageSize, // Take only pageSize games
-    });
-    res.status(200).json(transactions);
+        skip: (pageNumber - 1) * pageSize, // Skip for pagination
+        take: pageSize, // Take only pageSize records
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      db.transaction.count({
+        where: {
+          type: transactionType,
+          status: statusType,
+          OR: search
+            ? [
+                { user: { name: { contains: search, mode: "insensitive" } } },
+                { user: { email: { contains: search, mode: "insensitive" } } },
+                { wallet_address: { contains: search, mode: "insensitive" } },
+              ]
+            : undefined,
+        },
+      }),
+    ]);
+    res.status(200).json({ transactions, totalCount });
   } catch (error) {
     console.error("Error fetching transactions:", error);
     res.status(500).json({ message: "Internal server error" });
