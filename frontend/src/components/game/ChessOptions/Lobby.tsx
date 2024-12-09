@@ -5,6 +5,7 @@ import axios from "axios";
 import { WS_BACKEND_URL } from "../../../constants/routes";
 import usePersonStore from "../../../contexts/auth";
 import { INIT_GAME } from "../../../constants";
+import { formatTime } from "../../../types/utils/game";
 
 const Lobby = () => {
   const {
@@ -107,6 +108,7 @@ const Lobby = () => {
                         Rating: {opponent.player1.rating}
                       </p>
                       <p className="text-sm">Stake: ${opponent.stake}</p>
+                      <p className="text-sm">Format: {formatTime(opponent?.gameTime)} min</p>
                     </div>
                   </div>
                 </div>

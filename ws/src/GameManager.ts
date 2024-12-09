@@ -418,7 +418,8 @@ export class GameManager {
             !game.isFriendly &&
             // Check nearest rating only if type === "random"
             game.matchRating(user.rating) &&
-            (type === "lobby" || (type === "random" && game.stake === stake))
+            (type === "lobby" || (type === "random" && game.stake === stake)) &&
+            game.matchGameTime(Number(gameTime))
             // (type === "lobby" ||
             //   (type === "random" && game.matchRating(user.rating))) &&
             // game.stake === stake
@@ -437,7 +438,15 @@ export class GameManager {
           user.rating
         );
         const player2 = new Player(null, BLACK, null, "", "", 0);
-        const game = new Game(player1, player2, false, stake);
+        const game = new Game(
+          player1,
+          player2,
+          false,
+          stake,
+          undefined,
+          undefined,
+          Number(gameTime)
+        );
         console.log("Creating new game -> ", game.getGameId());
         this.games.push(game);
         if (user.role === "USER") {

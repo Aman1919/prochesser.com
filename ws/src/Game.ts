@@ -533,6 +533,10 @@ export class Game {
     return isCloseTo(playerRating, rating);
   }
 
+  matchGameTime(time: number) {
+    return this.gameTime === time
+  }
+
   async updateBalances(winner: Player, loser: Player): Promise<boolean> {
     try {
       // Ensure stake is a valid number

@@ -94,10 +94,10 @@ app.get("/ws/open_games", async (req, res) => {
   if (isVirtual && isVirtual == "true") {
     console.log("isVirtual");
     games =
-      token && stake ? await virtualGameManager.getAllGames(token, stake) : [];
+      (token && stake) ? await virtualGameManager.getAllGames(token, stake) : [];
   } else {
     console.log("real");
-    games = token && stake ? await gameManager.getAllGames(token, stake) : [];
+    games = (token && stake) ? await gameManager.getAllGames(token, stake) : [];
   }
   res.status(200).json({
     games,
