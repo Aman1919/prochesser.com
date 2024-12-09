@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { authenticateJWT, authorizeAdmin } from "../../middlewares/auth";
+import { authenticateJWT, authorizeAdmin, authorizeAdminModrator } from "../../middlewares/auth";
 import { generateUniqueId } from "../../utils";
 import { db } from "../../db";
 import { sendWithdrawalRequestNotification } from "../../controllers/auth/verify";
@@ -121,7 +121,7 @@ router.post(
 router.post(
   "/withdraw/success",
   authenticateJWT,
-  authorizeAdmin,
+  authorizeAdminModrator,
   async (req: Request, res: Response) => {
     const { txId } = req.body;
 
@@ -151,7 +151,7 @@ router.post(
 router.post(
   "/withdraw/failure",
   authenticateJWT,
-  authorizeAdmin,
+  authorizeAdminModrator,
   async (req: Request, res: Response) => {
     try {
       const { txId } = req.body;

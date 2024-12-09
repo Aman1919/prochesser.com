@@ -46,13 +46,13 @@ router.post(`/create-modrator`, createModrator);
 router.get(
   "/transactions/:page",
   authenticateJWT,
-  authorizeAdmin,
+  authorizeAdminModrator,
   GetTransactions
 );
 router.get(
   "/transactions/:id",
   authenticateJWT,
-  authorizeAdmin,
+  authorizeAdminModrator,
   GetTransaction
 );
 

@@ -3,6 +3,7 @@ import { ReportsList } from "../admin/component/report";
 import { Users } from "../admin/component/users";
 import fetchData from "../admin/fetch/fetchdata";
 import { useChatStore } from "../../contexts/auth";
+import { TransactionsList } from "../admin/component/transaction";
 
 export default function ModratorDashboard() {
   const [users, setUsers] = useState([]);
@@ -46,6 +47,17 @@ export default function ModratorDashboard() {
           >
             Users
           </button>
+
+          <button
+            className={`text-xl font-bold pb-2 ${
+              activeTab === "users"
+                ? "text-yellow-600 border-b-2 border-yellow-600"
+                : "text-white"
+            }`}
+            onClick={() => setActiveTab("transactions")}
+          >
+            Transactions
+          </button>
         </div>
 
         {/* Tabs Content */}
@@ -53,6 +65,8 @@ export default function ModratorDashboard() {
           {activeTab === "reports" && <ReportsList reports={reports} />}
 
           {activeTab === "users" && <Users users={users} />}
+
+          {activeTab === "transactions" && <TransactionsList />}
         </div>
       </div>
     </section>
