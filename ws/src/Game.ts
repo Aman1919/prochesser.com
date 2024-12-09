@@ -28,6 +28,7 @@ import { TEndGamePayload } from "./types";
 import { sendGameOverMessage } from "./utils/game";
 import { addMoveToRedis } from "./utils/redis";
 import axios from "axios";
+import ChessAI from "./ai";
 
 export class Game {
   private player1: Player;
@@ -46,10 +47,9 @@ export class Game {
   public stake: string;
   public gameTime: number;
   public isVirtual = false;
-
   private timer1: any;
   private timer2: any;
-
+  private chessAi = new ChessAI();
   constructor(
     player1: Player,
     player2: Player,
@@ -534,7 +534,7 @@ export class Game {
   }
 
   matchGameTime(time: number) {
-    return this.gameTime === time
+    return this.gameTime === time;
   }
 
   async updateBalances(winner: Player, loser: Player): Promise<boolean> {
@@ -629,87 +629,18 @@ export class Game {
       return;
     }
 
-    // Player2 with black color will be the AI opponent
-    // Evaluate moves and pick the best one
-    const StockFishMove = await this.getStockFishMove();
+    const StockFishMove = await this.chessAi.getStockfishMove(this.chess);
     const randomMoveFlag = Math.floor(Math.random() * 2);
-    // For making the game a little easier; otherwise, Stockfish gives the best move possible
-    const bestMove =
-      StockFishMove && randomMoveFlag ? StockFishMove : this.getRandomMove();
+    const bestMove = StockFishMove ? StockFishMove : this.getRandomMove();
+    // (await this.chessAi.getBestMove(this.chess)) ?? this.getRandomMove(); //
     console.log("stockFIsh", StockFishMove);
 
-    if (bestMove) {
-      console.log("move", bestMove);
-      this.makeMove(this.player2.getPlayer(), bestMove);
-      return bestMove;
-    }
-
-    return null;
+    this.makeMove(this.player2.getPlayer(), bestMove);
+    return bestMove;
   }
 
   private getRandomMove() {
-    const availableMoves = this.chess.moves({ verbose: true });
-
-    if (availableMoves.length === 0) {
-      return null; // No valid moves available
-    }
-
-    // Evaluate each move based on material gain
-    const evaluatedMoves = availableMoves.map((move) => {
-      const { captured } = move;
-      let score = 0;
-
-      // Assign values to captured pieces for material gain evaluation
-      if (captured) {
-        const pieceValues: Record<string, number> = {
-          p: 1, // Pawn
-          n: 3, // Knight
-          b: 3, // Bishop
-          r: 5, // Rook
-          q: 9, // Queen
-        };
-        score = pieceValues[captured.toLowerCase()] || 0; // Use lowercase to match key
-      }
-
-      return { move, score };
-    });
-
-    // Sort moves by score in descending order (best moves first)
-    evaluatedMoves.sort((a, b) => b.score - a.score);
-
-    // Pick the best move; if no beneficial move, pick a random move
-    return evaluatedMoves[0].score > 0
-      ? evaluatedMoves[0].move
-      : availableMoves[Math.floor(Math.random() * availableMoves.length)];
-  }
-
-  async getStockFishMove() {
-    const timeout = 5000; // 10 seconds
-
-    try {
-      const StockFish_API = `https://stockfish.online/api/s/v2.php?fen=${this.board}&depth=2`;
-
-      // Create a cancel token to handle the timeout
-      const source = axios.CancelToken.source();
-      const timeoutId = setTimeout(() => {
-        source.cancel("Stockfish API request timed out.");
-      }, timeout);
-
-      // Make the API request with the cancel token
-      const response = await axios.get(StockFish_API, {
-        cancelToken: source.token,
-      });
-      clearTimeout(timeoutId); // Clear the timeout if the request completes
-
-      const data = response.data;
-      return data.bestmove?.split(" ")[1] || null;
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.warn("Stockfish API request canceled due to timeout.");
-      } else {
-        console.error("Error fetching Stockfish move:", error);
-      }
-      return null;
-    }
+    const moves = this.chess.moves({ verbose: true });
+    return moves[Math.floor(Math.random() * moves.length)];
   }
 }

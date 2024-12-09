@@ -17,6 +17,7 @@ import {
   SEND_MESSAGE,
   SHOW_ERROR,
   RESTART_SERVER,
+  CHESSUSERNAMES,
 } from "./constants";
 import { Game } from "./Game";
 import { Player } from "./Player";
@@ -26,7 +27,6 @@ import { db } from "./db";
 import { TMove } from "./types/game.types";
 import { TEndGamePayload } from "./types";
 import { seedBoard } from "./utils/game";
-
 
 export class VirtualGameManager {
   private games: Game[];
@@ -458,15 +458,15 @@ export class VirtualGameManager {
   generateRandomPlayer(opponentRating: number): Player {
     // Utility functions to generate random values
     const generateRandomId = () => Math.random().toString(36).substring(2, 10);
-    const generateRandomName = () =>
-      `Player_${Math.random().toString(36).substring(2, 8)}`;
-    const generateRandomRating = () =>
-      Math.floor(Math.random() * 401) + (opponentRating - 200);
-
+    const generateRandomRating = (): number => {
+      const offset = Math.random() < 0.5 ? 10 : -10;
+      return opponentRating + offset;
+    };
     // Generate random values
     const id = generateRandomId();
     const color = "black";
-    const name = generateRandomName();
+    const name =
+      CHESSUSERNAMES[Math.floor(Math.random() * CHESSUSERNAMES.length)];
     const rating = generateRandomRating();
 
     // Create a new Player object
