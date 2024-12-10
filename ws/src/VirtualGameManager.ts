@@ -449,6 +449,7 @@ export class VirtualGameManager {
         undefined,
         true
       );
+      game.setChessAi();
       console.log("Creating new game -> ", game.getGameId());
       this.games.push(game);
       await game?.createGame();

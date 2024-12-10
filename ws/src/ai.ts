@@ -81,37 +81,56 @@ export default class ChessAI {
   private depth = 3;
   private stockfishEngine: Engine | null = null;
   constructor() {
-    const stockfishPath = path.join(__dirname, "../engine/stockfish");
-    this.stockfishEngine = new Engine(stockfishPath);
+    try {
+      const stockfishPath = path.resolve(process.cwd(), "engine/stockfish");
+      console.log("Stockfish binary path:", stockfishPath);
+  
+      // Ensure the path is passed to the Engine correctly
+      this.stockfishEngine = new Engine(stockfishPath);
+      console.log("Engine successfully initialized.");
+    } catch (error) {
+      console.error("Error initializing the Stockfish engine:", error);
+    }
   }
 
   //getting move using stockfish engine
   public async getStockfishMove(game: Chess) {
-    if (!this.stockfishEngine) return;
+    if (!this.stockfishEngine) {
+      console.warn("Stockfish engine is not initialized.");
+      return null;
+    }
+  
     await this.startEngine();
+  
     const fen = game.fen();
     this.setSkillLevel("2");
+  
     await this.stockfishEngine.position(fen);
-    const randomTimeMove = Math.floor(Math.random() * 6);
-
-    const result = await this.stockfishEngine.go({
-      movetime: randomTimeMove * 1000,
-    });
-
-    const bestMove = result.bestmove; // Example: "e2e4" or "e7e8q"
-
+  
+    const moveTimeMs =  1000;
+  
+    const result = await this.stockfishEngine.go({ movetime: moveTimeMs });
+    const bestMove = result?.bestmove; 
+  
     if (!bestMove) {
-      throw new Error("No move found by Stockfish");
+      this.stopEngine();
+      throw new Error("No move found by Stockfish.");
     }
-
+  
     const moves = game.moves({ verbose: true });
     const move = moves.find(
       (m) => m.from === bestMove.slice(0, 2) && m.to === bestMove.slice(2, 4)
     );
+  
     this.stopEngine();
+  
+    if (!move) {
+      throw new Error(`No legal move found matching Stockfish's suggestion: ${bestMove}`);
+    }
+  
     return move;
   }
-
+  
   // Best Move using minmax and apha-purning algorithm: an alternate method
   public getBestMove(game: Chess): Promise<any> {
     return new Promise((resolve, reject) => {
