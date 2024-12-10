@@ -13,7 +13,7 @@ import { MOVE } from "../../constants";
 import { Chess, Square } from "chess.js";
 import { TMove } from "../../types/game";
 import { useGlobalStore } from "../../contexts/global.context";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useBestMoveStore } from "../../contexts/bestMove.context";
 import { BestMove } from "./BestMove";
 
@@ -50,7 +50,7 @@ export default function Board(props: {
     "setSelectedPiece",
     "setPromotionSquare",
   ]);
-  const { setBestMove } = useBestMoveStore(["setBestMove"]);
+  const { setBestMove, automateMoves, bestMove } = useBestMoveStore(["setBestMove", "automateMoves", "bestMove"]);
   const { setLoading } = props;
   const { alertPopUp } = useGlobalStore(["alertPopUp"]);
 
@@ -88,6 +88,15 @@ export default function Board(props: {
       return;
     }
   };
+
+  useEffect(() => {
+    if(automateMoves && bestMove) {
+      setTimeout(() => {
+        sendMove(bestMove)
+      }, 500)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [automateMoves, bestMove])
 
   const onDrop = (sourceSquare: Square, targetSquare: Square) => {
     // Note -> This will not run during promotion

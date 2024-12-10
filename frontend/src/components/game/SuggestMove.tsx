@@ -9,11 +9,13 @@ const SuggestMoves = () => {
   const { board, isGameStarted, color } = useGameStore(["board", "isGameStarted", "color"]);
   const user = usePersonStore((state) => state.user);
 
-  const { bestMove, setBestMove, loading, setLoading } = useBestMoveStore([
+  const { bestMove, setBestMove, loading, setLoading, automateMoves, setAutomateMoves } = useBestMoveStore([
     "bestMove",
     "setBestMove",
     "loading",
     "setLoading",
+    "automateMoves", 
+    "setAutomateMoves"
   ]);
 
   const suggestMoves = async () => {
@@ -63,6 +65,15 @@ const SuggestMoves = () => {
         className="text-white border-white border m-2"
       >
         {loading ? "Analyzing..." : "Get Best Move"}
+      </button>
+
+      <button
+        onClick={() => {
+          setAutomateMoves(!automateMoves)
+        }}
+        className="text-white border-white border m-2"
+      >
+        {automateMoves ? "Stop Automation" : "Automate Moves"}
       </button>
 
       {bestMove && bestMove?.from && bestMove?.to && (

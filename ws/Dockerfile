@@ -9,6 +9,8 @@ RUN npm install -g typescript
 
 COPY . .
 
+RUN chmod +x /usr/src/app/engine/stockfish
+
 # RUN npm run build
 RUN tsc -b
 
