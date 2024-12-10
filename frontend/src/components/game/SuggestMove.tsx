@@ -62,7 +62,7 @@ const SuggestMoves = () => {
     <>
       <button
         onClick={suggestMoves}
-        className="text-white border-white border m-2"
+        className="text-white border-white border m-2 p-2"
       >
         {loading ? "Analyzing..." : "Get Best Move"}
       </button>
@@ -71,7 +71,7 @@ const SuggestMoves = () => {
         onClick={() => {
           setAutomateMoves(!automateMoves)
         }}
-        className="text-white border-white border m-2"
+        className="text-white border-white border m-2 p-2"
       >
         {automateMoves ? "Stop Automation" : "Automate Moves"}
       </button>
