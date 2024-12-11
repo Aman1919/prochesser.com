@@ -49,7 +49,7 @@ export class Game {
   public isVirtual = false;
   private timer1: any;
   private timer2: any;
-  private chessAi = new ChessAI();
+  private chessAi:ChessAI | null = null  
   constructor(
     player1: Player,
     player2: Player,
@@ -80,6 +80,10 @@ export class Game {
       !gameTime || Number.isNaN(gameTime) ? INITIAL_TIME : gameTime;
     this.isVirtual = isVirtual ? isVirtual : this.isVirtual;
   }
+
+  setChessAi(){
+    this.chessAi = new ChessAI();
+  } 
 
   getPlayer1() {
     return this.player1;
@@ -620,10 +624,12 @@ export class Game {
   }
 
   async makeAiMove() {
+    if(!this.chessAi)return;
     if (
       this.chess.isGameOver() &&
       this.isAiGame() &&
-      this.chess.turn() === "b"
+      this.chess.turn() === "b" 
+      
     ) {
       console.log("Game is over. No moves can be made.");
       return;
@@ -638,7 +644,6 @@ export class Game {
     this.makeMove(this.player2.getPlayer(), bestMove);
     return bestMove;
   }
-
   private getRandomMove() {
     const moves = this.chess.moves({ verbose: true });
     return moves[Math.floor(Math.random() * moves.length)];
