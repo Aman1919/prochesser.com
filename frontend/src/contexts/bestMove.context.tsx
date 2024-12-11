@@ -6,16 +6,19 @@ import { TMove } from "../types/game";
 type TState = {
   bestMove: TMove | null;
   loading: boolean;
+  automateMoves: boolean;
 };
 
 type TAction = {
   setBestMove: (bestMove: TMove | null) => void;
   setLoading: (loading: boolean) => void;
+  setAutomateMoves: (automateMoves: boolean) => void;
 };
 
 const INITIAL_STATE = {
   bestMove: null,
   loading: false,
+  automateMoves: false
 };
 
 type TGlobalState = TAction & TState;
@@ -27,6 +30,9 @@ export const useStore = create<TGlobalState>((set) => ({
   },
   setLoading: (loading: boolean) => {
     set({ loading })
+  },
+  setAutomateMoves: (automateMoves: boolean) => {
+    set({ automateMoves })
   }
 }));
 

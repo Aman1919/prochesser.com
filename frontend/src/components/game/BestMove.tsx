@@ -15,7 +15,7 @@ export const BestMove = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const drawArrow = ({ from, to, color }: any, scale: any) => {
     if(!userColor) {
-      alert("Something went wrong while playing the best move");
+      // alert("Something went wrong while playing the best move");
       return null;
     }
     const [fromX, fromY] = squareToCoords(from, userColor);
