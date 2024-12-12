@@ -95,42 +95,64 @@ export default class ChessAI {
 
   //getting move using stockfish engine
   public async getStockfishMove(game: Chess) {
-    if (!this.stockfishEngine) {
-      console.warn("Stockfish engine is not initialized.");
-      return null;
-    }
-  
-    await this.startEngine();
-  
-    const fen = game.fen();
-    this.setSkillLevel("2");
-  
-    await this.stockfishEngine.position(fen);
-  
-    const moveTimeMs =  1000;
-  
-    const result = await this.stockfishEngine.go({ movetime: moveTimeMs });
-    const bestMove = result?.bestmove; 
-  
-    if (!bestMove) {
+    try{
+      if (!this.stockfishEngine) {
+        console.warn("Stockfish engine is not initialized.");
+        return null;
+      }
+    
+      await this.startEngine();
+    
+      const fen = game.fen();
+      this.setSkillLevel("2");
+    
+      await this.stockfishEngine.position(fen);
+    
+      const moveTimeMs = (Math.floor(Math.random() * 5) + 1) * 1000;
+    // Pm733gERhg45yJVnR4
+      const result = await this.stockfishEngine.go({ movetime: moveTimeMs });
+      const bestMove = result?.bestmove; 
+    
+      if (!bestMove) {
+        this.stopEngine();
+        throw new Error("No move found by Stockfish.");
+      }
+    
+      const moves = game.moves({ verbose: true });
+      const move = moves.find(
+        (m) => m.from === bestMove.slice(0, 2) && m.to === bestMove.slice(2, 4)
+      );
+    
       this.stopEngine();
-      throw new Error("No move found by Stockfish.");
+    
+      if (!move) {
+        throw new Error(`No legal move found matching Stockfish's suggestion: ${bestMove}`);
+      }
+    
+      return move;
+    }catch(e){
+console.log("Error Stockfish Move",e);
+return null
     }
-  
-    const moves = game.moves({ verbose: true });
-    const move = moves.find(
-      (m) => m.from === bestMove.slice(0, 2) && m.to === bestMove.slice(2, 4)
-    );
-  
-    this.stopEngine();
-  
-    if (!move) {
-      throw new Error(`No legal move found matching Stockfish's suggestion: ${bestMove}`);
-    }
-  
-    return move;
   }
   
+
+  async startEngine() {
+    try {
+      if (!this.stockfishEngine) return;
+      await this.stockfishEngine.init();
+      await this.stockfishEngine.isready();
+      await this.stockfishEngine.ucinewgame();
+    } catch (e) {
+      console.log("error starting Engine", e);
+    }
+  }
+
+  async stopEngine() {
+    // Quit the engine
+    await this.stockfishEngine?.quit();
+  }
+
   // Best Move using minmax and apha-purning algorithm: an alternate method
   public getBestMove(game: Chess): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -171,21 +193,6 @@ export default class ChessAI {
     });
   }
 
-  async startEngine() {
-    try {
-      if (!this.stockfishEngine) return;
-      await this.stockfishEngine.init();
-      await this.stockfishEngine.isready();
-      await this.stockfishEngine.ucinewgame();
-    } catch (e) {
-      console.log("error starting Engine", e);
-    }
-  }
-
-  async stopEngine() {
-    // Quit the engine
-    await this.stockfishEngine?.quit();
-  }
 
   async setSkillLevel(skillLevel: string) {
     // Set the skill level (0-20 for Stockfish)
