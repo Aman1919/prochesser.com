@@ -108,8 +108,7 @@ export default class ChessAI {
     
       await this.stockfishEngine.position(fen);
     
-      const moveTimeMs = (Math.floor(Math.random() * 5) + 1) * 1000;
-    // Pm733gERhg45yJVnR4
+      const moveTimeMs = (Math.floor(Math.random() * 3)) * 1000 +3000;
       const result = await this.stockfishEngine.go({ movetime: moveTimeMs });
       const bestMove = result?.bestmove; 
     
