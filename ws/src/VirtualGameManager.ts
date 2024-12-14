@@ -281,6 +281,7 @@ export class VirtualGameManager {
         OR: [{ blackPlayerId: user.id }, { whitePlayerId: user.id }],
         status: IN_PROGRESS,
         isVirtual: true,
+        isFriendly:true
       },
     });
 
