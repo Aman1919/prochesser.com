@@ -21,7 +21,7 @@ jobs:
 
       - name: Build and Push Docker Images
         run: |
-          docker compose -f docker-compose.yml up -d
+          docker compose -f docker-compose.yml build
 
       - name: Push Docker Images to Docker Hub
         run: |
