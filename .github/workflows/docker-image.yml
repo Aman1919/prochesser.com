@@ -37,12 +37,12 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           script: |
             cd /srv/docker-chessbet2/chess-bet
-            docker stop copyauthors288_chessbet-backend-container
-            docker rm copyauthors288_chessbet-backend-container
-            docker stop copyauthors288_chessbet-frontend-container
-            docker rm copyauthors288_chessbet-frontend-container
-            docker stop copyauthors288_chessbet-ws-container
-            docker rm copyauthors288_chessbet-ws-container
+            docker stop copyauthors288_chessbet_backend_container
+            docker rm copyauthors288_chessbet_backend_container
+            docker stop copyauthors288_chessbet_frontend_container
+            docker rm copyauthors288_chessbet_frontend_container
+            docker stop copyauthors288_chessbet_ws_container
+            docker rm copyauthors288_chessbet_ws_container
             docker rmi copyauthors288/chessbet-backend
             docker rmi copyauthors288/chessbet-frontend
             docker rmi copyauthors288/chessbet-ws
