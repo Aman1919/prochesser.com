@@ -104,7 +104,7 @@ app.get("/ws/open_games", async (req, res) => {
   });
 });
 
-app.get(`ws/ping`, (req, res) => {
+app.get(`/ws/ping`, (req, res) => {
   res.status(200).json({
     message: `Server Running on PORT: ${PORT}`
   })
