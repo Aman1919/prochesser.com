@@ -50,6 +50,12 @@ app.use(`/${BACKEND_ROUTE}/game/`, game);
 app.use(`/${BACKEND_ROUTE}/report/`, report);
 app.use(`/${BACKEND_ROUTE}/admin/`, admin);
 
+app.get(`${BACKEND_ROUTE}/ping`, (req, res) => {
+  res.status(200).json({
+    message: `Server Running on PORT: ${PORT}`
+  })
+})
+
 cron.schedule("*/10 * * * * *", async function () {
   await sendMovesToDB();
 });
