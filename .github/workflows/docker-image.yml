@@ -37,7 +37,13 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           script: |
             cd /srv/docker-chessbet2/chess-bet
-            docker compose down
-            docker compose pull
-            docker compose up -d
-
+            docker stop copyauthors288/chessbet-backend-container
+            docker rm copyauthors288/chessbet-backend-container
+            docker stop copyauthors288/chessbet-frontend-container
+            docker rm copyauthors288/chessbet-frontend-container
+            docker stop copyauthors288/chessbet-ws-container
+            docker rm copyauthors288/chessbet-ws-container
+            docker rmi copyauthors288/chessbet-backend
+            docker rmi copyauthors288/chessbet-frontend
+            docker rmi copyauthors288/chessbet-ws
+            docker compose -f docker-compose.yml up -d
