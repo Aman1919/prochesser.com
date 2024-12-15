@@ -23,7 +23,6 @@ export const useGameLogic = () => {
   const qc = useQueryClient();
 
   useEffect(() => {
-    console.log(result);
     if (result?.gameResult === CHECKMATE) {
       alertPopUp({
         message: "Game Over!",

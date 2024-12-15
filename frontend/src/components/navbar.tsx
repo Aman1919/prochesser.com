@@ -196,14 +196,6 @@ export default function NavBar() {
               {user?.role === "USER" && (
                 <>
                   <Link
-                    to="/game"
-                    className="text-black text-lg font-medium hover:text-yellow-500 transition-colors duration-300"
-                  >
-                    Game
-                  </Link>
-                  <div className="w-[2px] h-[20px] bg-black"></div>
-
-                  <Link
                     to="/account"
                     className="text-black text-lg font-medium hover:text-yellow-500 transition-colors duration-300"
                   >
@@ -356,12 +348,6 @@ export default function NavBar() {
             <div className="flex flex-col gap-2">
               {user?.role === "USER" && (
                 <>
-                  <Link
-                    to="/game"
-                    className="text-black text-lg font-medium hover:text-yellow-500 transition-colors duration-300"
-                  >
-                    Game
-                  </Link>
                   <Link
                     to="/account"
                     className="text-black text-lg font-medium hover:text-yellow-500 transition-colors duration-300"
