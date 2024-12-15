@@ -27,7 +27,6 @@ import { TGameStatus, TMove } from "./types/game.types";
 import { TEndGamePayload } from "./types";
 import { sendGameOverMessage } from "./utils/game";
 import { addMoveToRedis } from "./utils/redis";
-import axios from "axios";
 import ChessAI from "./ai";
 
 export class Game {

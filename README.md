@@ -1,6 +1,6 @@
 Setup postgres and redis
 -> Using docker
-    docker compose -f .\docker-compose-uat.yml up -d
+    docker compose -f docker-compose-uat.yml up -d
 -> Using aiven or any other platform
 
 Database Setup
