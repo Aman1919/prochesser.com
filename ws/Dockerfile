@@ -12,7 +12,13 @@ RUN npm install
 RUN npm install -g typescript
 
 # Clone the Stockfish repository and build the engine
-RUN cd ./engine && rm ./stockfish &&  && git clone https://github.com/official-stockfish/Stockfish.git && cd Stockfish/src/ && make -j build ARCH=x86-64 && mv ./stockfish ./../..  && chmod +x stockfish
+RUN mkdir -p /usr/src/app/engine && cd /usr/src/app/engine \
+    && rm -f ./stockfish \
+    && git clone https://github.com/official-stockfish/Stockfish.git \
+    && cd Stockfish/src/ \
+    && make -j build ARCH=x86-64 \
+    && mv ./stockfish ./../.. \
+    && chmod +x /usr/src/app/engine/stockfish
 
 # Copy all files to the container
 COPY . .
