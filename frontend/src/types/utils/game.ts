@@ -37,3 +37,23 @@ export function isPlayerTurn(fen: string, playerColor: TColor): boolean {
   const color = playerColor === "white" ? "w" : "b";
   return activeColor === color;
 }
+
+export function getRandomNumberBetweenWeighted(
+  x: number,
+  y: number,
+  weightFunction: (num: number) => number
+): number {
+  if (x > y) [x, y] = [y, x]; // Ensure x is less than or equal to y
+
+  const numbers: number[] = [];
+  for (let i = x; i <= y; i++) {
+    const weight = weightFunction(i); // Get weight for this number
+    for (let j = 0; j < weight; j++) {
+      numbers.push(i);
+    }
+  }
+
+  // Randomly select from the weighted list
+  const randomIndex = Math.floor(Math.random() * numbers.length);
+  return numbers[randomIndex];
+}

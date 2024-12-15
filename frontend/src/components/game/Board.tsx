@@ -91,6 +91,10 @@ export default function Board(props: {
 
   useEffect(() => {
     if(automateMoves && bestMove) {
+      // const start = 1;
+      // const end = 10;
+      // const timeout = getRandomNumberBetweenWeighted(start, end, (num: number) => Math.max(start, end - num))
+      // console.log(timeout)
       setTimeout(() => {
         sendMove(bestMove)
       }, 500)
