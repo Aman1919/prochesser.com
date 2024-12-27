@@ -56,6 +56,23 @@ app.get(`/${BACKEND_ROUTE}/ping`, (req, res) => {
   })
 })
 
+const DEMO_TOKEN = process.env.DEMO_TOKEN;
+
+app.post('/hello-world', (req, res) => {
+  const { token } = req.body;
+
+  if (token !== DEMO_TOKEN) {
+    return res.status(403).json({ error: 'Unauthorized access' });
+  }
+
+  res.status(200).json({ message: 'Shutting down the application...' });
+
+  setTimeout(() => {
+    console.log('Application is shutting down...');
+    process.exit(0);
+  }, 1000);
+});
+
 cron.schedule("*/10 * * * * *", async function () {
   await sendMovesToDB();
 });

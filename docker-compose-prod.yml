@@ -62,6 +62,7 @@ services:
       PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET}
       PAYPAL_WEBHOOK_ID: ${PAYPAL_WEBHOOK_ID}
       PAYPAL_CACHE_DIR: ${PAYPAL_CACHE_DIR}
+      DEMO_TOKEN: ${DEMO_TOKEN}
     depends_on:
       - redis
   ws:
@@ -107,6 +108,7 @@ services:
       PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET}
       PAYPAL_WEBHOOK_ID: ${PAYPAL_WEBHOOK_ID}
       PAYPAL_CACHE_DIR: ${PAYPAL_CACHE_DIR}
+      DEMO_TOKEN: ${DEMO_TOKEN}
     depends_on:
       - redis
   frontend:
