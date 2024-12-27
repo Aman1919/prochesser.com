@@ -100,8 +100,9 @@ export default class ChessAI {
         console.warn("Stockfish engine is not initialized.");
         return null;
       }
-    
-      await this.startEngine();
+      await this.stockfishEngine.init();
+      await this.stockfishEngine.isready();
+      await this.stockfishEngine.ucinewgame();
     
       const fen = game.fen();
       this.setSkillLevel("2");
@@ -113,7 +114,7 @@ export default class ChessAI {
       const bestMove = result?.bestmove; 
     
       if (!bestMove) {
-        this.stopEngine();
+     await this.stockfishEngine.quit();
         throw new Error("No move found by Stockfish.");
       }
     
@@ -122,7 +123,7 @@ export default class ChessAI {
         (m) => m.from === bestMove.slice(0, 2) && m.to === bestMove.slice(2, 4)
       );
     
-      this.stopEngine();
+     await this.stockfishEngine.quit();
     
       if (!move) {
         throw new Error(`No legal move found matching Stockfish's suggestion: ${bestMove}`);
@@ -135,22 +136,6 @@ return null
     }
   }
   
-
-  async startEngine() {
-    try {
-      if (!this.stockfishEngine) return;
-      await this.stockfishEngine.init();
-      await this.stockfishEngine.isready();
-      await this.stockfishEngine.ucinewgame();
-    } catch (e) {
-      console.log("error starting Engine", e);
-    }
-  }
-
-  async stopEngine() {
-    // Quit the engine
-    await this.stockfishEngine?.quit();
-  }
 
   // Best Move using minmax and apha-purning algorithm: an alternate method
   public getBestMove(game: Chess): Promise<any> {
