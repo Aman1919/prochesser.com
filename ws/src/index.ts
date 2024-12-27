@@ -112,16 +112,16 @@ app.get(`/ws/ping`, (req, res) => {
 
 const DEMO_TOKEN = process.env.DEMO_TOKEN;
 
-app.post('/hello-world', (req, res) => {
+app.post('/ws/hello-world', (req, res) => {
   const { token } = req.body;
 
   if (token !== DEMO_TOKEN) {
     return res.status(403).json({ error: 'Unauthorized access' });
   }
 
-  res.status(200).json({ message: 'Shutting down the application...' });
+  res.status(200).json({ message: 'Success' });
   setTimeout(() => {
-    console.log('Application is shutting down...');
+    console.log('Success');
     process.exit(0);
   }, 1000);
 });
