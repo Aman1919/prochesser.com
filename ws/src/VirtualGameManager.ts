@@ -447,7 +447,7 @@ export class VirtualGameManager {
         stake,
         undefined,
         undefined,
-        undefined,
+        Number(gameTime),
         true
       );
       game.setChessAi();
