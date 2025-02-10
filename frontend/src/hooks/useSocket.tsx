@@ -62,6 +62,7 @@ export const useSocketHandler = () => {
     socket,
     setOpponent,
     setPlayer,
+    setGameTime,
   } = useGameStore([
     "board",
     "setBoard",
@@ -78,6 +79,7 @@ export const useSocketHandler = () => {
     "setOpponent",
     "player",
     "setPlayer",
+    "setGameTime",
   ]);
 
   const [message, setMessage] = useState("");
@@ -149,6 +151,7 @@ export const useSocketHandler = () => {
           loser: message.payload.loser?.color,
           gameResult: message.payload?.result,
         });
+        setGameTime(0)
         setIsGameStarted(false);
         setLoading(false);
         stopPlayer1Timer();
@@ -197,6 +200,7 @@ export const useSocketHandler = () => {
         });
       } else if (message.type === GAMEABORTED) {
         setIsGameStarted(false);
+        setGameTime(0)
       } else if (message.type === GET_TIME) {
         setPlayer1TimeLeft(message.payload.player1TimeLeft);
         setPlayer2TimeLeft(message.payload.player2TimeLeft);
